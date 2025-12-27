@@ -1,4 +1,2 @@
-streamlit
+flask
 mysql-connector-python
-qrcode
-Pillow
