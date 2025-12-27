@@ -84,20 +84,37 @@
     }
 
     function enviarPedido() {
-        if (Object.keys(pedido).length === 0) {
+        // Limpiar productos con cantidad 0
+        let pedidoFinal = {};
+        for (let id in pedido) {
+            if (pedido[id] > 0) {
+                pedidoFinal[id] = pedido[id];
+            }
+        }
+
+        if (Object.keys(pedidoFinal).length === 0) {
             alert("No has seleccionado productos");
             return;
         }
 
         fetch("/pedido", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(pedido)
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(pedidoFinal)
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Error al enviar el pedido");
+            }
+            return res.json();
+        })
         .then(data => {
-            alert("Pedido enviado ✔️ Número: " + data.pedido_id);
+            alert("✅ Pedido enviado con éxito\nNúmero: " + data.pedido_id);
             location.reload();
+        })
+        .catch(err => {
+            console.error(err);
+            alert("❌ Hubo un error al enviar el pedido");
         });
     }
 </script>
