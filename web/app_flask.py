@@ -7,8 +7,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def menu():
-    conexion = get_conexion()
-    cursor = conexion.cursor(dictionary=True)
+    conexion, cursor = get_conexion()
+
 
     cursor.execute("SELECT id, nombre, precio FROM productos")
     productos = cursor.fetchall()
