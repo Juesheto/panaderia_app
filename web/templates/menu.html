@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panadería Juesheto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff8f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .producto {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 12px;
+            font-size: 16px;
+            margin: 0 5px;
+        }
+
+        .confirmar {
+            width: 100%;
+            padding: 15px;
+            background: #e67e22;
+            color: white;
+            border: none;
+            font-size: 18px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🥐 Panadería Juesheto</h1>
+<p style="text-align:center">Haz tu pedido y recógelo en caja</p>
+
+<div id="productos">
+    {% for p in productos %}
+    <div class="producto">
+        <div>
+            <strong>{{ p.nombre }}</strong><br>
+            ${{ p.precio }}
+        </div>
+        <div>
+            <button onclick="restar({{ p.id }})">-</button>
+            <span id="cant-{{ p.id }}">0</span>
+            <button onclick="sumar({{ p.id }})">+</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<button class="confirmar" onclick="enviarPedido()">🛒 Confirmar pedido</button>
+
+<script>
+    let pedido = {};
+
+    function sumar(id) {
+        pedido[id] = (pedido[id] || 0) + 1;
+        document.getElementById("cant-" + id).innerText = pedido[id];
+    }
+
+    function restar(id) {
+        if (pedido[id] > 0) {
+            pedido[id]--;
+            document.getElementById("cant-" + id).innerText = pedido[id];
+        }
+    }
+
+    function enviarPedido() {
+        if (Object.keys(pedido).length === 0) {
+            alert("No has seleccionado productos");
+            return;
+        }
+
+        fetch("/pedido", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(pedido)
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Pedido enviado ✔️ Número: " + data.pedido_id);
+            location.reload();
+        });
+    }
+</script>
+
+</body>
+</html>

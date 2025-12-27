@@ -1,14 +1,11 @@
 import mysql.connector
+import os
 
 def get_conexion():
-    """
-    Devuelve la conexión y cursor de MySQL.
-    """
-    conexion = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="juesheto",
-        database="panaderia"
+    return mysql.connector.connect(
+        host=os.getenv("MYSQLHOST"),
+        port=int(os.getenv("MYSQLPORT")),
+        user=os.getenv("MYSQLUSER"),
+        password=os.getenv("MYSQLPASSWORD"),
+        database=os.getenv("MYSQLDATABASE")
     )
-    cursor = conexion.cursor(dictionary=True)  # Devuelve resultados como diccionario
-    return conexion, cursor
